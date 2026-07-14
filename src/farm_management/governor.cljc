@@ -48,7 +48,7 @@
         hard? (boolean (seq hard))
         conf (or (:confidence proposal) 0.0)
         low? (< conf confidence-floor)
-        cost (get proposal :cost 0)
+        cost (get request :cost 0)
         high-cost-supply? (and (= :order-supplies (:op proposal))
                                (>= cost supply-cost-threshold))
         risky-op? (contains? escalating-ops (:op proposal))]

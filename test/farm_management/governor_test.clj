@@ -47,15 +47,15 @@
 
 (deftest escalates-on-high-cost-supply-order
   (let [st (fresh-store)
-        proposal {:op :order-supplies :effect :propose :confidence 0.9 :stake :medium :cost 7500}
-        v (governor/check {:site-id "site-1"} {} proposal st)]
+        proposal {:op :order-supplies :effect :propose :confidence 0.9 :stake :medium}
+        v (governor/check {:site-id "site-1" :cost 7500} {} proposal st)]
     (is (:escalate? v))
     (is (not (:hard? v)))))
 
 (deftest ok-on-low-cost-supply-order
   (let [st (fresh-store)
-        proposal {:op :order-supplies :effect :propose :confidence 0.9 :stake :low :cost 1000}
-        v (governor/check {:site-id "site-1"} {} proposal st)]
+        proposal {:op :order-supplies :effect :propose :confidence 0.9 :stake :low}
+        v (governor/check {:site-id "site-1" :cost 1000} {} proposal st)]
     (is (:ok? v))
     (is (not (:hard? v)))
     (is (not (:escalate? v)))))
