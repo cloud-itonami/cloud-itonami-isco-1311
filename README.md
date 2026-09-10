@@ -61,15 +61,15 @@ human-in-the-loop interrupt/resume via checkpointing.
                                            +-> :hold               (:hard? true)
 ```
 
-- `src/farm_management/store.cljc` — `Store` protocol + `MemStore`:
+- `src/farm_management/store.kotoba` — `Store` protocol + `MemStore`:
   registered farm sites, production records, supply orders, an append-only audit ledger.
-- `src/farm_management/advisor.cljc` — `Advisor` protocol; `mock-advisor`
+- `src/farm_management/advisor.kotoba` — `Advisor` protocol; `mock-advisor`
   (deterministic, default) proposes a farm operation from a
   request; `llm-advisor` wraps a `langchain.model/ChatModel` — either
   way the advisor only ever produces a `:propose`-effect proposal,
   never a committed record, and LLM parse failures always yield
   `:confidence 0.0` (forces escalation, never fabricated confidence).
-- `src/farm_management/governor.cljc` — `FarmGovernor/check`: a pure
+- `src/farm_management/governor.kotoba` — `FarmGovernor/check`: a pure
   function, wired as its own `:govern` node. Hard invariants
   (unregistered farm site, a proposal whose `:effect` isn't `:propose`)
   always route to `:hold`. Escalation invariants (`:flag-crop-anomaly`,
@@ -79,7 +79,7 @@ human-in-the-loop interrupt/resume via checkpointing.
   (`actor/approve!`), matching the README's robotics-premise statement
   that anomalies and significant supply decisions always require
   human sign-off.
-- `src/farm_management/actor.cljc` — `build-graph`, `run-request!`,
+- `src/farm_management/actor.kotoba` — `build-graph`, `run-request!`,
   `approve!`: the `langgraph.graph/state-graph` wiring itself.
 
 ```bash
