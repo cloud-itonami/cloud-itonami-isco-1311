@@ -1,0 +1,34 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:physics` runs it.
+;;
+;; README "Robotics premise": a data-collection robot performs harvest
+;; scheduling, yield logging, supply ordering and field/forest anomaly
+;; detection for agricultural and forestry production managers (ISCO 1311).
+;; Its physical work is in the field: hauling logged harvest crates from the
+;; rows to the headland over soil, and checking that the irrigation main can
+;; deliver the flow the schedule asks for.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isco-1311"
+ :cases
+ [{:id :harvest-crate-haul
+   :kind :transport
+   :procedure "field robot weighs and logs harvest crates at the row end and hauls them 150 m over tilled soil to the headland trailer"
+   :params {:mass-kg 120.0 :distance-m 150.0 :v-max-mps 1.2 :a-max-mps2 0.5
+            :brake-decel-mps2 0.8 :drive-force-n 350.0 :crr 0.08
+            :cog-height-m 0.60 :support-half-length-m 0.45}
+   :sweep {:param :payload-kg :values [20.0 60.0 120.0 180.0 240.0]}
+   :quantity :cycle-time-s
+   :limit {:max 160.0 :basis "estimate: one haul inside the pickers' crate-filling interval so no full crate waits at the row end"}
+   :boundary {:lo 5.0 :hi 330.0}}
+  {:id :irrigation-main-headloss
+   :kind :pipe-flow
+   :procedure "robot checks the 400 m PE irrigation main (63 mm OD, ~51 mm bore) against the flow the irrigation schedule orders for the next block"
+   :params {:diameter-m 0.051 :length-m 400.0 :roughness-m 7.0e-6
+            :density-kg-m3 998.0 :viscosity-pa-s 1.0e-3 :pump-efficiency 0.60}
+   :sweep {:param :q-m3s :values [0.001 0.002 0.003 0.004 0.005]}
+   :quantity :head-m
+   :limit {:max 15.0 :basis "estimate: head budget left for the main after the pump duty point and the emitters' operating pressure"}
+   :boundary {:lo 0.0005 :hi 0.008}}]}
